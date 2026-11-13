@@ -1,0 +1,156 @@
+.content {
+  width: 200px;
+  height: 200px;
+
+  position: relative;
+  font-size: 10px;
+}
+
+.body-bottom {
+  position: absolute;
+
+  width: 40%;
+  height: 40%;
+  background-color: #f8da5d;
+  border-radius: 50%;
+  /* border: 1px red solid;  */
+
+  bottom: 5%;
+  left: 5%;
+
+  font-size: 10px;
+  z-index: 10;
+}
+
+.body-bottom::before,
+.body-bottom::after {
+  content: '';
+  position: absolute;
+
+  width: 25%;
+  height: 25%;
+  background-color: #f8745d;
+
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: linear-gradient(to bottom, #ff0000 0%, #ffffff 100%);
+
+  z-index: 15;
+}
+
+/* --- ЛЕВЫЙ ТРЕУГОЛЬНИК --- */
+.body-bottom::before {
+  left: 17%;
+  bottom: 32%;
+  transform: rotate(-45deg);
+}
+
+/* --- ПРАВЫЙ ТРЕУГОЛЬНИК --- */
+.body-bottom::after {
+  left: 34%;
+  bottom: 15%;
+  transform: rotate(135deg);
+}
+
+.body-top {
+  position: absolute;
+  width: 30%;
+  height: 30%;
+
+  background-color: #f8da5d;
+  /* border: 1px red solid;  */
+  border-radius: 50%;
+
+  left: 28%;
+  bottom: 28%;
+
+  z-index: 20;
+}
+
+.body-top::before {
+  content: '';
+
+  position: absolute;
+  width: 40%;
+  height: 40%;
+
+  background-color: #ac6d0a;
+  /* border: 1px red solid;  */
+  box-shadow: inset 0 0 0 2px #422a09;
+  border-radius: 50%;
+
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  z-index: 30;
+}
+
+.guitar-neck {
+  position: absolute;
+  width: 6%;
+  height: 60%;
+  background-color: #8b4513;
+
+  left: 45%;
+  bottom: 18%;
+
+  transform: rotate(45deg);
+  z-index: 5;
+
+  font-size: 10px;
+}
+
+.guitar-strings {
+  position: absolute;
+
+  /* Размеры и позиция точно как у грифа */
+  width: 6%;
+  height: 60%;
+  left: 45%;
+  bottom: 18%;
+
+  transform: rotate(45deg);
+
+  /* Поверх корпуса, но под дыркой (у body-top::before z-index: 30) */
+  z-index: 35;
+}
+
+.string {
+  position: absolute;
+  height: 100%; /* На всю длину грифа */
+  width: 5%; /* Толщина струны (можете поменять на 2px) */
+  background-color: #000;
+  top: 0;
+}
+
+/* Распределяем 5 струн по ширине грифа */
+.string:nth-child(1) {
+  left: 10%;
+}
+.string:nth-child(2) {
+  left: 30%;
+}
+.string:nth-child(3) {
+  left: 50%;
+} /* Центральная струна */
+.string:nth-child(4) {
+  left: 70%;
+}
+.string:nth-child(5) {
+  left: 90%;
+}
+
+.guitar-strings::after {
+  content: '';
+  position: absolute;
+
+  /* Прямоугольник растягивается на всю ширину грифа */
+  width: 130%;
+  height: 2%; /* Высота прямоугольника (можно 3-8%) */
+
+  /* Позиционируем в самом низу контейнера струн */
+  bottom: 0; /* Чуть-чуть вылезаем за нижний край, чтобы он "держал" струны */
+  left: -10%;
+
+  background-color: #ac6d0a; /* Темный цвет (металл или дерево) */
+}

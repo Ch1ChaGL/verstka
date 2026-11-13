@@ -1,0 +1,46 @@
+.lab-page {
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px;
+  margin: 40px 0;
+  box-shadow: 0 4px 24px rgba(15, 23, 42, 0.05);
+}
+
+.lab-header {
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 32px;
+}
+
+.lab-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+  background: #eff6ff;
+  padding: 6px 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}
+
+.lab-note {
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.lab-header h1 {
+  font-size: 32px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.lab-body {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0 40px;
+}
