@@ -10,26 +10,25 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="null.css" />
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="index.css" />
+    <link rel="stylesheet" href="style/null.css" />
+    <link rel="stylesheet" href="style/style/style.css" />
+    <link rel="stylesheet" href="css/index.css" />
   </head>
   <body>
-    <header>
-      <div class="container">
-        <a href="index.html" class="logo">
-          <span class="logo-box"></span>
+    <header class="header">
+      <div class="container header__inner">
+        <a href="index.html" class="header__logo">
+          <span class="header__logo-box"></span>
           <span>Марков</span>
         </a>
-        <nav class="nav">
-          <ul>
-            <li><a href="index.html">Главная</a></li>
-            <li><a href="#experience">Опыт</a></li>
-            <li><a href="#skills">Навыки</a></li>
-            <li><a href="labs/lab2/lab2.html">Задания</a></li>
-            <li><a href="course.html">Курсовая</a></li>
-            <li><a href="#contacts">Контакты</a></li>
-          </ul>
+        <nav class="header__nav">
+          <a href="index.html">Главная</a>
+          <a href="#experience">Опыт</a>
+          <a href="#projects">Проекты</a>
+          <a href="#skills">Навыки</a>
+          <a href="labs/lab2/lab2.html">Задания</a>
+          <a href="course.html">Курсовая</a>
+          <a href="#contacts">Контакты</a>
         </nav>
       </div>
     </header>
@@ -37,32 +36,34 @@
     <main>
       <section class="hero">
         <div class="container">
-          <div class="hero-content">
-            <div class="hero-info">
-              <h1>Привет, я <span>Данил Марков</span> 👋</h1>
-              <p>
+          <div class="hero__content">
+            <div class="hero__info">
+              <h1 class="hero__title">
+                Привет, я <span>Данил Марков</span> 👋
+              </h1>
+              <p class="hero__text">
                 Системный аналитик из Санкт-Петербурга. Проектирую модули
                 приложений, пишу ТЗ, декомпозирую и ставлю задачи команде
                 разработки.
               </p>
 
-              <div class="hero-meta">
+              <div class="hero__meta">
                 <span>22 года</span>
                 <span>Санкт-Петербург</span>
                 <span>Опыт 2 г. 8 мес.</span>
                 <span>REST API · UML · Agile</span>
               </div>
 
-              <div class="hero-actions">
+              <div class="hero__actions">
                 <a href="#contacts" class="btn">Связаться</a>
-                <a href="#experience" class="btn btn-outline">Смотреть опыт</a>
+                <a href="#experience" class="btn btn--outline">Смотреть опыт</a>
               </div>
             </div>
-            <div class="hero-side">
-              <div class="avatar">
+            <div class="hero__side">
+              <div class="hero__avatar">
                 <img src="img/avatar.jpg" alt="Данил Марков" />
               </div>
-              <ul>
+              <ul class="hero__facts">
                 <li>
                   <span>Должность</span><strong>Системный аналитик</strong>
                 </li>
@@ -76,20 +77,329 @@
           </div>
         </div>
       </section>
+
+      <section class="about">
+        <div class="container">
+          <h2 class="section-title">Обо мне</h2>
+          <p class="section-sub">Немного о том, чем я занимаюсь</p>
+
+          <div class="about__content">
+            <div class="about__text">
+              <p>
+                Меня зовут Данил, мне 22 года. Работаю системным аналитиком:
+                проектирую модули приложений, пишу технические задания,
+                декомпозирую и ставлю задачи команде разработки. Также делаю
+                макеты интерфейсов и презентации продукта.
+              </p>
+              <p>
+                Отдельный плюс — практический опыт в разработке: React, Redux,
+                TypeScript, JavaScript, Nest.js, Express.js, Sequelize, Prisma,
+                PostgreSQL. Немного знаком с Python, C# и MS SQL. Это помогает
+                лучше понимать команду разработки и связывать бизнес с
+                технической частью.
+              </p>
+            </div>
+
+            <div class="about__facts">
+              <div class="about__fact">
+                <span class="about__fact-icon">🎯</span>
+                <h4>Проектирование</h4>
+                <p>Модули, логика, прототипы интерфейсов</p>
+              </div>
+              <div class="about__fact">
+                <span class="about__fact-icon">📝</span>
+                <h4>Документация</h4>
+                <p>ТЗ, база знаний, руководство оператора</p>
+              </div>
+              <div class="about__fact">
+                <span class="about__fact-icon">🎨</span>
+                <h4>Дизайн</h4>
+                <p>Макеты, презентации, демо-материалы</p>
+              </div>
+              <div class="about__fact">
+                <span class="about__fact-icon">💻</span>
+                <h4>Разработка</h4>
+                <p>React, TypeScript, Node.js, PostgreSQL</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="experience" id="experience">
+        <div class="container">
+          <h2 class="section-title">Опыт работы</h2>
+          <p class="section-sub">2 года 8 месяцев в IT</p>
+
+          <div class="experience__list">
+            <div class="experience__item">
+              <div class="experience__num">4</div>
+              <div class="experience__body">
+                <div class="experience__period">
+                  Февраль 2026 — сейчас · 10 мес.
+                </div>
+                <h3 class="experience__title">
+                  Системный аналитик (Junior - Middle)
+                </h3>
+                <div class="experience__company">Астра Марин Софт</div>
+                <ul class="experience__points">
+                  <li>Проектирование модулей приложения, подготовка ТЗ</li>
+                  <li>Декомпозиция и постановка задач разработчикам</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="experience__item">
+              <div class="experience__num">3</div>
+              <div class="experience__body">
+                <div class="experience__period">
+                  Август 2024 — Декабрь 2025 · 1 г. 5 мес.
+                </div>
+                <h3 class="experience__title">Системный аналитик (Junior)</h3>
+                <div class="experience__company">Код Грин Инжиниринг</div>
+                <ul class="experience__points">
+                  <li>SaaS-система управления проектами (аналог MS Project)</li>
+                  <li>Документация: руководство оператора, база знаний</li>
+                  <li>Предпроектный анализ системы отбраковки деталей</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="experience__item">
+              <div class="experience__num">2</div>
+              <div class="experience__body">
+                <div class="experience__period">Практика</div>
+                <h3 class="experience__title">
+                  Frontend-разработчик (практикант)
+                </h3>
+                <div class="experience__company">Datagile</div>
+                <ul class="experience__points">
+                  <li>Исправление ошибок в приложении</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="experience__item">
+              <div class="experience__num">1</div>
+              <div class="experience__body">
+                <div class="experience__period">Проектная работа</div>
+                <h3 class="experience__title">Программист-разработчик</h3>
+                <div class="experience__company">
+                  Opushka House · Rem&amp;Coil
+                </div>
+                <ul class="experience__points">
+                  <li>Приложение для базы отдыха «Opushka House»</li>
+                  <li>Приложение умных опросов для Rem&amp;Coil</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="projects" id="projects">
+        <div class="container">
+          <h2 class="section-title">Проекты</h2>
+          <p class="section-sub">Пять проектов, в которых я участвовал</p>
+
+          <div class="projects__list">
+            <article class="projects__row">
+              <div class="projects__body">
+                <h3 class="projects__title">
+                  SaaS-система управления проектами
+                </h3>
+                <p class="projects__text">
+                  Присоединился к инвестиционному проекту на этапе активной
+                  разработки. Продукт — аналог MS Project для управления
+                  проектами и задачами команд. Провёл анализ текущего состояния
+                  продукта и требований, сформулировал требования к новому
+                  функционалу на основе сравнения конкурентных решений,
+                  спроектировал логику работы модулей, создал интерактивные
+                  прототипы интерфейса и поставил задачи команде разработки.
+                </p>
+                <p class="projects__text">
+                  Отдельно занимался документацией: за время проекта полностью
+                  обновил руководство оператора и базу знаний. После успешного
+                  запуска пилотной версии готовил презентационные и
+                  маркетинговые материалы. Проект был приостановлен по итогам
+                  стратегического анализа коммерческой перспективы, но я
+                  обеспечил полное аналитическое сопровождение от разработки до
+                  стабильной версии, готовой к продажам.
+                </p>
+                <div class="projects__tags">
+                  <span>Аналитика</span>
+                  <span>Прототипы</span>
+                  <span>Документация</span>
+                  <span>SaaS</span>
+                </div>
+              </div>
+              <div class="projects__image">
+                <img
+                  src="img/projects/saas.jpg"
+                  alt="SaaS-система управления проектами"
+                />
+              </div>
+            </article>
+
+            <article class="projects__row projects__row--reverse">
+              <div class="projects__body">
+                <h3 class="projects__title">Opushka House</h3>
+                <p class="projects__text">
+                  Приложение для базы отдыха «Opushka House» — создано для
+                  ускорения взаимодействия между персоналом. Раньше сотрудники
+                  общались в мессенджерах и теряли заявки, теперь все процессы —
+                  в одном приложении: бронирования, задачи, отчёты. Разработал с
+                  нуля: продумал структуру экранов, спроектировал логику,
+                  реализовал интерфейс.
+                </p>
+                <p class="projects__text">
+                  Проект с открытым исходным кодом — можно посмотреть на GitHub
+                  и оценить структуру кода, подход к организации компонентов и
+                  работу с данными. Приложение используется в реальной работе
+                  базы отдыха.
+                </p>
+                <div class="projects__tags">
+                  <span>Приложение</span>
+                  <span>GitHub</span>
+                  <span>Frontend</span>
+                </div>
+              </div>
+              <div class="projects__image">
+                <img src="img/projects/opushka.jpg" alt="Opushka House" />
+              </div>
+            </article>
+
+            <article class="projects__row">
+              <div class="projects__body">
+                <h3 class="projects__title">DeepQuestionnaire2</h3>
+                <p class="projects__text">
+                  Приложение для маркетингового отдела компании Rem&amp;Coil —
+                  оптимизация процесса опроса пользователей и удобное хранение
+                  отчётов. Раньше опросы проводились вручную, результаты
+                  терялись в таблицах. Разработал приложение, которое
+                  автоматизирует сбор ответов, формирует отчёты и хранит историю
+                  опросов в структурированном виде.
+                </p>
+                <p class="projects__text">
+                  Отдельное внимание — удобству интерфейса: маркетологи должны
+                  быстро создавать опросы и видеть результаты без технической
+                  подготовки. Код открыт на GitHub — можно посмотреть, как
+                  реализована работа с формами, валидация и хранение данных.
+                </p>
+                <div class="projects__tags">
+                  <span>Приложение</span>
+                  <span>GitHub</span>
+                  <span>Автоматизация</span>
+                </div>
+              </div>
+              <div class="projects__image">
+                <img
+                  src="img/projects/questionnaire.jpg"
+                  alt="DeepQuestionnaire2"
+                />
+              </div>
+            </article>
+
+            <article class="projects__row projects__row--reverse">
+              <div class="projects__body">
+                <h3 class="projects__title">Система автоматизации ПАК</h3>
+                <p class="projects__text">
+                  Участвовал в предпроектном анализе системы автоматической
+                  отбраковки деталей на производстве — с использованием
+                  машинного зрения и кобота. Задача: заменить ручной контроль
+                  качества автоматическим. Выехал к производителю для сбора
+                  информации о функционале, возможностях интеграции и
+                  ограничениях оборудования.
+                </p>
+                <p class="projects__text">
+                  Прошёл обучение у вендора системы, полученные знания передал
+                  команде разработки. Это позволило команде быстрее погрузиться
+                  в проект, избежав длительного самостоятельного изучения
+                  системы. По итогам анализа подготовил рекомендации по
+                  интеграции и план внедрения.
+                </p>
+                <div class="projects__tags">
+                  <span>Аналитика</span>
+                  <span>ПАК</span>
+                  <span>Машинное зрение</span>
+                </div>
+              </div>
+              <div class="projects__image">
+                <img
+                  src="img/projects/cobot.jpg"
+                  alt="Машинное зрение и кобот"
+                />
+              </div>
+            </article>
+
+            <article class="projects__row">
+              <div class="projects__body">
+                <h3 class="projects__title">AMOS BS — переработка для флота</h3>
+                <p class="projects__text">
+                  Переработка старой программы для флота AMOS BS — системы,
+                  которая использовалась годами и требовала обновления. Работаю
+                  в команде аналитиков: прорабатываем разные модули системы,
+                  собираем требования от пользователей и стейкхолдеров,
+                  проектируем новый функционал с учётом современных требований к
+                  интерфейсам и производительности.
+                </p>
+                <p class="projects__text">
+                  В данный момент разрабатываем интернет-площадку для тендеров,
+                  механизм ваучеров и бюджетов — и многое другое. Подготовил
+                  план поэтапной миграции, чтобы не останавливать работу флота
+                  на время перехода. Документация — руководство пользователя и
+                  техническое описание новой системы.
+                </p>
+                <div class="projects__tags">
+                  <span>Аналитика</span>
+                  <span>Переработка</span>
+                  <span>Флот</span>
+                  <span>Тендеры</span>
+                </div>
+              </div>
+              <div class="projects__image">
+                <img src="img/projects/amos.jpg" alt="AMOS BS" />
+              </div>
+            </article>
+
+            <article class="projects__row projects__row--reverse">
+              <div class="projects__body">
+                <h3 class="projects__title">UI/UX-дизайн</h3>
+                <p class="projects__text">
+                  Макеты интерфейсов, презентации продукта, демонстрационные
+                  материалы — всё, что помогает пользователю воспринимать
+                  продукт и понимать его ценность. Работал над дизайном для
+                  нескольких проектов: от прототипов экранов до финальных
+                  макетов, готовых к вёрстке.
+                </p>
+                <div class="projects__tags">
+                  <span>Дизайн</span>
+                  <span>Макеты</span>
+                  <span>Презентации</span>
+                </div>
+              </div>
+              <div class="projects__image projects__image--double">
+                <img src="img/projects/ui-1.jpg" alt="UI/UX дизайн — 1" />
+                <img src="img/projects/ui-2.jpg" alt="UI/UX дизайн — 2" />
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
     </main>
 
-    <footer>
+    <footer class="footer">
       <div class="container">
-        <div class="footer-links">
+        <div class="footer__links">
           <a href="index.html">Главная</a>
           <a href="#experience">Опыт</a>
+          <a href="#projects">Проекты</a>
           <a href="#skills">Навыки</a>
           <a href="labs/lab2/lab2.html">Задания</a>
           <a href="course.html">Курсовая</a>
           <a href="#contacts">Контакты</a>
         </div>
-
-        <div class="footer-bottom">Данил Марков © 2026</div>
+        <div class="footer__bottom">Данил Марков © 2026</div>
       </div>
     </footer>
   </body>

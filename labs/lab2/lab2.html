@@ -1,36 +1,35 @@
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Лабораторная 2 — Данил Марков</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../../null.css" />
-    <link rel="stylesheet" href="../../style.css" />
-    <link rel="stylesheet" href="lab2.css" />
-    <link rel="stylesheet" href="pic.css" />
+    <link rel="stylesheet" href="../../style/null.css" />
+    <link rel="stylesheet" href="../../style/style/style.css" />
+    <link rel="stylesheet" href="css/lab2.css" />
+    <link rel="stylesheet" href="css/pic.css" />
   </head>
   <body>
-    <header>
-      <div class="container">
-        <a href="index.html" class="logo">
-          <span class="logo-box"></span>
+    <header class="header">
+      <div class="container header__inner">
+        <a href="../../index.html" class="header__logo">
+          <span class="header__logo-box"></span>
           <span>Марков</span>
         </a>
-        <nav class="nav">
-          <ul>
-            <li><a href="../../index.html">Главная</a></li>
-            <li><a href="../../index.html#experience">Опыт</a></li>
-            <li><a href="../../index.html#skills">Навыки</a></li>
-            <li><a href="lab2.html">Задания</a></li>
-            <li><a href="../../course.html">Курсовая</a></li>
-            <li><a href="../../index.html#contacts">Контакты</a></li>
-          </ul>
+        <nav class="header__nav">
+          <a href="../../index.html">Главная</a>
+          <a href="../../index.html#experience">Опыт</a>
+          <a href="../../index.html#projects">Проекты</a>
+          <a href="../../index.html#skills">Навыки</a>
+          <a href="lab2.html">Задания</a>
+          <a href="../../course.html">Курсовая</a>
+          <a href="../../index.html#contacts">Контакты</a>
         </nav>
       </div>
     </header>
@@ -38,16 +37,18 @@
     <main>
       <div class="container">
         <div class="lab-page">
-          <div class="lab-header">
-            <span class="lab-tag">Лабораторная работа 2</span>
-            <h1>Гитара на CSS</h1>
-            <p class="lab-note">Базовый размер: 200 × 200 px</p>
+          <div class="lab-page__header">
+            <span class="lab-page__tag">Лабораторная работа 2</span>
+            <h1 class="lab-page__title">Гитара на CSS</h1>
+            <p class="lab-page__note">Базовый размер: 200 × 200 px</p>
+            <p class="lab-page__note">Вариант 5</p>
           </div>
 
-          <div class="lab-body">
+          <div class="lab-page__body">
             <div class="content">
               <div class="body-bottom"></div>
               <div class="body-top"></div>
+
               <div class="guitar-neck"></div>
               <div class="guitar-strings">
                 <span class="string"></span>
@@ -56,24 +57,31 @@
                 <span class="string"></span>
                 <span class="string"></span>
               </div>
+
+              <div class="guitar-neck-head"></div>
+
+              <div class="dot d1"></div>
+              <div class="dot d2"></div>
+              <div class="dot d3"></div>
+              <div class="dot d4"></div>
             </div>
           </div>
         </div>
       </div>
     </main>
 
-    <footer>
+    <footer class="footer">
       <div class="container">
-        <div class="footer-links">
+        <div class="footer__links">
           <a href="../../index.html">Главная</a>
-          <a href="#experience">Опыт</a>
-          <a href="#skills">Навыки</a>
-          <a href="../lab2/lab2.html">Задания</a>
-          <a href="course.html">Курсовая</a>
-          <a href="#contacts">Контакты</a>
+          <a href="../../index.html#experience">Опыт</a>
+          <a href="../../index.html#projects">Проекты</a>
+          <a href="../../index.html#skills">Навыки</a>
+          <a href="lab2.html">Задания</a>
+          <a href="../../course.html">Курсовая</a>
+          <a href="../../index.html#contacts">Контакты</a>
         </div>
-
-        <div class="footer-bottom">Данил Марков © 2026</div>
+        <div class="footer__bottom">Данил Марков © 2026</div>
       </div>
     </footer>
   </body>

@@ -1,0 +1,211 @@
+// ==========================================
+// ПЕРЕМЕННЫЕ
+// ==========================================
+
+$bg: #0f172a;
+$bg-deep: #0b1220;
+$surface: #ffffff;
+$surface-alt: #f1f5f9;
+$text: #1e293b;
+$muted: #64748b;
+$accent: #2563eb;
+$accent-hover: #1d4ed8;
+$accent-2: #38bdf8;
+$border: #e2e8f0;
+
+$font-main: 'Inter', Arial, sans-serif;
+
+$radius-sm: 10px;
+$radius-lg: 20px;
+
+$mobile: 768px;
+
+// ==========================================
+// БАЗА
+// ==========================================
+
+:root {
+  --bg: #{$bg};
+  --surface: #{$surface};
+  --surface-alt: #{$surface-alt};
+  --text: #{$text};
+  --muted: #{$muted};
+  --accent: #{$accent};
+  --accent-2: #{$accent-2};
+  --border: #{$border};
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: $font-main;
+  color: $text;
+  background: $surface;
+  line-height: 1.6;
+}
+
+main {
+  flex: 1;
+}
+
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+// ==========================================
+// КНОПКИ
+// ==========================================
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 22px;
+  background: $accent;
+  color: #fff;
+  border-radius: $radius-sm;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    background: $accent-hover;
+    transform: translateY(-1px);
+  }
+
+  &--outline {
+    background: transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+
+// ==========================================
+// HEADER
+// ==========================================
+
+.header {
+  background: $bg;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+
+  &__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 70px;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 18px;
+  }
+
+  &__logo-box {
+    width: 38px;
+    height: 38px;
+    background: linear-gradient(135deg, $accent, $accent-2);
+    border-radius: $radius-sm;
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 9px;
+      height: 9px;
+      background: #fff;
+      border-radius: 50%;
+      top: 8px;
+      left: 8px;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 2px;
+      background: #fff;
+      top: 17px;
+      left: 13px;
+      transform: rotate(35deg);
+    }
+  }
+
+  &__nav {
+    display: flex;
+    gap: 24px;
+
+    a {
+      color: #cbd5e1;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: 0.2s;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+}
+
+// ==========================================
+// FOOTER
+// ==========================================
+
+.footer {
+  background: $bg-deep;
+  color: $muted;
+  padding: 32px 0 20px;
+  font-size: 13px;
+
+  &__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 20px;
+
+    a {
+      color: #94a3b8;
+      text-decoration: none;
+      font-size: 13px;
+      transition: 0.2s;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+  }
+
+  &__bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 16px;
+    text-align: center;
+    color: #475569;
+    font-size: 12px;
+  }
+}

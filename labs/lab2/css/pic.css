@@ -1,9 +1,12 @@
 .content {
   width: 200px;
   height: 200px;
+  /* border: 1px red solid; */
 
   position: relative;
   font-size: 10px;
+
+  filter: drop-shadow(-12px 8px 15px rgba(0, 0, 0, 0.6));
 }
 
 .body-bottom {
@@ -19,7 +22,7 @@
   left: 5%;
 
   font-size: 10px;
-  z-index: 10;
+  z-index: 20;
 }
 
 .body-bottom::before,
@@ -37,14 +40,14 @@
   z-index: 15;
 }
 
-/* --- ЛЕВЫЙ ТРЕУГОЛЬНИК --- */
+/* Левый треугольник  */
 .body-bottom::before {
   left: 17%;
   bottom: 32%;
   transform: rotate(-45deg);
 }
 
-/* --- ПРАВЫЙ ТРЕУГОЛЬНИК --- */
+/* Правый треугольник */
 .body-bottom::after {
   left: 34%;
   bottom: 15%;
@@ -60,10 +63,10 @@
   /* border: 1px red solid;  */
   border-radius: 50%;
 
-  left: 28%;
-  bottom: 28%;
+  left: 29%;
+  bottom: 29%;
 
-  z-index: 20;
+  z-index: 10;
 }
 
 .body-top::before {
@@ -103,7 +106,6 @@
 .guitar-strings {
   position: absolute;
 
-  /* Размеры и позиция точно как у грифа */
   width: 6%;
   height: 60%;
   left: 45%;
@@ -111,19 +113,17 @@
 
   transform: rotate(45deg);
 
-  /* Поверх корпуса, но под дыркой (у body-top::before z-index: 30) */
   z-index: 35;
 }
 
 .string {
   position: absolute;
-  height: 100%; /* На всю длину грифа */
-  width: 5%; /* Толщина струны (можете поменять на 2px) */
+  height: 100%;
+  width: 5%;
   background-color: #000;
   top: 0;
 }
 
-/* Распределяем 5 струн по ширине грифа */
 .string:nth-child(1) {
   left: 10%;
 }
@@ -132,7 +132,7 @@
 }
 .string:nth-child(3) {
   left: 50%;
-} /* Центральная струна */
+}
 .string:nth-child(4) {
   left: 70%;
 }
@@ -144,13 +144,56 @@
   content: '';
   position: absolute;
 
-  /* Прямоугольник растягивается на всю ширину грифа */
   width: 130%;
-  height: 2%; /* Высота прямоугольника (можно 3-8%) */
+  height: 2%;
 
-  /* Позиционируем в самом низу контейнера струн */
-  bottom: 0; /* Чуть-чуть вылезаем за нижний край, чтобы он "держал" струны */
+  bottom: 0;
   left: -10%;
 
-  background-color: #ac6d0a; /* Темный цвет (металл или дерево) */
+  background-color: #ac6d0a;
+}
+
+.guitar-neck-head {
+  position: absolute;
+  width: 10%;
+  height: 12%;
+  bottom: 59%;
+  left: 60%;
+  transform: rotate(45deg);
+  z-index: 5;
+
+  background-color: #8d1608;
+
+  mask-image:
+    radial-gradient(circle at 0 0, transparent 8%, black 9%),
+    radial-gradient(circle at 100% 0, transparent 8%, black 9%),
+    radial-gradient(circle at 0 100%, transparent 8%, black 9%),
+    radial-gradient(circle at 100% 100%, transparent 8%, black 9%);
+  mask-composite: intersect;
+}
+
+.dot {
+  position: absolute;
+  width: 1.7%;
+  height: 1.7%;
+  border-radius: 50%;
+  background-color: #f8da5d;
+  z-index: 40;
+}
+.d1 {
+  left: 61%;
+  bottom: 64%;
+}
+.d2 {
+  left: 64%;
+  bottom: 67%;
+}
+
+.d3 {
+  left: 66%;
+  bottom: 63%;
+}
+.d4 {
+  left: 69%;
+  bottom: 66%;
 }
