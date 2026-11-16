@@ -22,10 +22,10 @@
           <span>Марков</span>
         </a>
         <nav class="header__nav">
-          <a href="index.html">Главная</a>
+          <a href="#hero">Главная</a>
           <a href="#experience">Опыт</a>
           <a href="#projects">Проекты</a>
-          <a href="#skills">Навыки</a>
+          <a href="#education">Образование</a>
           <a href="labs/lab2/lab2.html">Задания</a>
           <a href="course.html">Курсовая</a>
           <a href="#contacts">Контакты</a>
@@ -34,7 +34,7 @@
     </header>
 
     <main>
-      <section class="hero">
+      <section class="hero" id="hero">
         <div class="container">
           <div class="hero__content">
             <div class="hero__info">
@@ -227,10 +227,10 @@
                   стабильной версии, готовой к продажам.
                 </p>
                 <div class="projects__tags">
-                  <span>Аналитика</span>
-                  <span>Прототипы</span>
-                  <span>Документация</span>
-                  <span>SaaS</span>
+                  <span class="badge">Аналитика</span>
+                  <span class="badge">Прототипы</span>
+                  <span class="badge">Документация</span>
+                  <span class="badge">SaaS</span>
                 </div>
               </div>
               <div class="projects__image">
@@ -259,9 +259,9 @@
                   базы отдыха.
                 </p>
                 <div class="projects__tags">
-                  <span>Приложение</span>
-                  <span>GitHub</span>
-                  <span>Frontend</span>
+                  <span class="badge">Приложение</span>
+                  <span class="badge">GitHub</span>
+                  <span class="badge">Frontend</span>
                 </div>
               </div>
               <div class="projects__image">
@@ -271,7 +271,7 @@
 
             <article class="projects__row">
               <div class="projects__body">
-                <h3 class="projects__title">DeepQuestionnaire2</h3>
+                <h3 class="projects__title">Умные опросы в маркетинге</h3>
                 <p class="projects__text">
                   Приложение для маркетингового отдела компании Rem&amp;Coil —
                   оптимизация процесса опроса пользователей и удобное хранение
@@ -287,9 +287,9 @@
                   реализована работа с формами, валидация и хранение данных.
                 </p>
                 <div class="projects__tags">
-                  <span>Приложение</span>
-                  <span>GitHub</span>
-                  <span>Автоматизация</span>
+                  <span class="badge">Приложение</span>
+                  <span class="badge">GitHub</span>
+                  <span class="badge">Автоматизация</span>
                 </div>
               </div>
               <div class="projects__image">
@@ -319,9 +319,9 @@
                   интеграции и план внедрения.
                 </p>
                 <div class="projects__tags">
-                  <span>Аналитика</span>
-                  <span>ПАК</span>
-                  <span>Машинное зрение</span>
+                  <span class="badge">Аналитика</span>
+                  <span class="badge">ПАК</span>
+                  <span class="badge">Машинное зрение</span>
                 </div>
               </div>
               <div class="projects__image">
@@ -351,10 +351,10 @@
                   техническое описание новой системы.
                 </p>
                 <div class="projects__tags">
-                  <span>Аналитика</span>
-                  <span>Переработка</span>
-                  <span>Флот</span>
-                  <span>Тендеры</span>
+                  <span class="badge">Аналитика</span>
+                  <span class="badge">Переработка</span>
+                  <span class="badge">Флот</span>
+                  <span class="badge">Тендеры</span>
                 </div>
               </div>
               <div class="projects__image">
@@ -373,9 +373,9 @@
                   макетов, готовых к вёрстке.
                 </p>
                 <div class="projects__tags">
-                  <span>Дизайн</span>
-                  <span>Макеты</span>
-                  <span>Презентации</span>
+                  <span class="badge">Дизайн</span>
+                  <span class="badge">Макеты</span>
+                  <span class="badge">Презентации</span>
                 </div>
               </div>
               <div class="projects__image projects__image--double">
@@ -386,15 +386,84 @@
           </div>
         </div>
       </section>
+
+      <section class="education" id="education">
+        <div class="container">
+          <h2 class="section-title">Образование</h2>
+          <p class="section-sub">Учёба в СПбПУ Петра Великого</p>
+
+          <div class="education__list">
+            <div class="education__card">
+              <span class="education__year badge"
+                >2028 · неоконченное высшее</span
+              >
+              <h3 class="education__card-title">СПбПУ Петра Великого</h3>
+              <p class="education__card-text">
+                ИКНК · 09.03.03 «Прикладная информатика»
+              </p>
+            </div>
+
+            <div class="education__card">
+              <span class="education__year badge"
+                >2024 · среднее специальное</span
+              >
+              <h3 class="education__card-title">СПбПУ Петра Великого</h3>
+              <p class="education__card-text">
+                ИСПО · 09.02.07 «Информационные системы и программирование»
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="contacts" id="contacts">
+        <div class="container">
+          <h2 class="contacts__title">Давайте работать вместе</h2>
+          <p class="contacts__text">
+            Открыт к предложениям на позицию системного аналитика. Формат —
+            офис, гибрид или удалённо.
+          </p>
+
+          <div class="contacts__list">
+            <a href="mailto:markov.danil.04@mail.ru" class="contacts__item">
+              <span class="contacts__icon">✉</span>
+              <span class="contacts__info">
+                <strong>markov.danil.04@mail.ru</strong>
+                <small>Почта — предпочитаемый способ связи</small>
+              </span>
+            </a>
+
+            <a
+              href="https://t.me/Ch1ChaGL"
+              class="contacts__item"
+              target="_blank"
+            >
+              <span class="contacts__icon">✈</span>
+              <span class="contacts__info">
+                <strong>@Ch1ChaGL</strong>
+                <small>Telegram</small>
+              </span>
+            </a>
+
+            <a href="tel:+79522033346" class="contacts__item">
+              <span class="contacts__icon">☎</span>
+              <span class="contacts__info">
+                <strong>+7 (952) 203-33-46</strong>
+                <small>Телефон</small>
+              </span>
+            </a>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="footer">
       <div class="container">
         <div class="footer__links">
-          <a href="index.html">Главная</a>
+          <a href="#hero">Главная</a>
           <a href="#experience">Опыт</a>
           <a href="#projects">Проекты</a>
-          <a href="#skills">Навыки</a>
+          <a href="#education">Образование</a>
           <a href="labs/lab2/lab2.html">Задания</a>
           <a href="course.html">Курсовая</a>
           <a href="#contacts">Контакты</a>

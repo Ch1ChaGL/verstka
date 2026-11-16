@@ -13,7 +13,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
   color: #1e293b;
   background: #ffffff;
   line-height: 1.6;
@@ -93,7 +93,7 @@ html {
   position: relative;
 }
 .header__logo-box::before {
-  content: '';
+  content: "";
   position: absolute;
   width: 9px;
   height: 9px;
@@ -103,7 +103,7 @@ html {
   left: 8px;
 }
 .header__logo-box::after {
-  content: '';
+  content: "";
   position: absolute;
   width: 14px;
   height: 2px;
@@ -155,4 +155,15 @@ html {
   text-align: center;
   color: #475569;
   font-size: 12px;
-} /*# sourceMappingURL=style.css.map */
+}
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+}/*# sourceMappingURL=style.css.map */
