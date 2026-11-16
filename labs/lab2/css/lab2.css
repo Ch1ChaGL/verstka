@@ -18,16 +18,7 @@ main {
 }
 
 .lab-page__tag {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--accent);
-  background: #eff6ff;
-  padding: 6px 14px;
-  border-radius: 6px;
-  margin-bottom: 12px;
 }
 
 .lab-page__title {
