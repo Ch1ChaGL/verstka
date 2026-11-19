@@ -126,6 +126,30 @@ html {
 .header__nav a:hover {
   color: #fff;
 }
+.header__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+}
+.header__burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #fff;
+  border-radius: 2px;
+}
+@media (max-width: 850px) {
+  .header__nav {
+    display: none;
+  }
+  .header__burger {
+    display: flex;
+  }
+}
 
 .footer {
   background: #0b1220;

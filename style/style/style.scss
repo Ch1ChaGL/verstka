@@ -170,6 +170,34 @@ html {
       }
     }
   }
+
+  &__burger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+
+    span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+    }
+  }
+
+  @media (max-width: 850px) {
+    &__nav {
+      display: none; // меню скрыто
+    }
+
+    &__burger {
+      display: flex; // бургер показан
+    }
+  }
 }
 
 // ==========================================
