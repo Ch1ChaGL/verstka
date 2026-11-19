@@ -189,13 +189,62 @@ html {
     }
   }
 
+  &__dropdown {
+    position: relative;
+
+    &-toggle {
+      color: #cbd5e1;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+
+      &:hover {
+        color: #fff;
+      }
+    }
+
+    &-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 160px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      padding: 6px;
+
+      // скрыто
+      opacity: 0;
+      visibility: hidden;
+
+      a {
+        display: block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        color: var(--text);
+        font-size: 14px;
+        text-decoration: none;
+
+        &:hover {
+          background: #eff6ff;
+          color: var(--accent);
+        }
+      }
+    }
+
+    &:hover &-menu {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
   @media (max-width: 850px) {
     &__nav {
-      display: none; // меню скрыто
+      display: none;
     }
 
     &__burger {
-      display: flex; // бургер показан
+      display: flex;
     }
   }
 }
