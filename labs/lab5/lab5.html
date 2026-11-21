@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Лабораторная 2 — Данил Марков</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../style/null.css" />
+    <link rel="stylesheet" href="../../style/style/style.css" />
+    <link rel="stylesheet" href="../../style/lab.css" />
+    <link rel="stylesheet" href="css/lab5.css" />
+    <script src="../../scripts/burger.js" defer></script>
+    <script src="js/lab5.js" defer></script>
+  </head>
+  <body>
+    <header class="header">
+      <div class="container header__inner">
+        <a href="../../index.html" class="header__logo">
+          <span class="header__logo-box"></span>
+          <span>Марков</span>
+        </a>
+
+        <button class="header__burger" id="burger">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav class="header__nav" id="nav">
+          <a href="../../index.html#hero">Главная</a>
+          <a href="../../index.html#experience">Опыт</a>
+          <a href="../../index.html#projects">Проекты</a>
+          <a href="../../index.html#education">Образование</a>
+          <div class="header__dropdown">
+            <span class="header__dropdown-toggle">Задания ▾</span>
+            <div class="header__dropdown-menu">
+              <a href="../../labs/lab2/lab2.html">Задание 2</a>
+              <a href="../../labs/lab3/lab3.html">Задание 3</a>
+              <a href="../../labs/lab4/lab4.html">Задание 4</a>
+              <a href="../../labs/lab5/lab5.html">Задание 5</a>
+            </div>
+          </div>
+          <a href="../../course.html">Курсовая</a>
+          <a href="../../index.html#contacts">Контакты</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <div class="container">
+        <div class="lab-page">
+          <div class="lab-page__header">
+            <span class="lab-page__tag badge">Лабораторная работа 5</span>
+            <h1 class="lab-page__title">Перетаскивание объектов</h1>
+            <p class="lab-page__note">Вариант 2</p>
+            <p class="lab-page__note">Собака с мячем</p>
+          </div>
+
+          <div class="lab-page__body">
+            <div class="reference">
+              <span class="reference__title">Образец</span>
+              <img
+                class="reference__img"
+                src="img/full_dog.png"
+                alt="Собранная собака с мячом"
+                draggable="false"
+              />
+            </div>
+
+            <div class="tools">
+              <button class="tools__btn btn" id="rotateLeft" type="button">
+                ⟲ Повернуть влево
+              </button>
+              <button class="tools__btn btn" id="rotateRight" type="button">
+                Повернуть вправо ⟳
+              </button>
+              <button
+                class="tools__btn btn btn--outline"
+                id="shuffle"
+                type="button"
+              >
+                Перемешать заново
+              </button>
+            </div>
+
+            <div class="hint">
+              <span
+                >Нажми на картинку, чтобы выбрать её, затем поверни
+                кнопками.</span
+              >
+            </div>
+
+            <div class="field" id="field">
+              <img
+                class="piece piece--head"
+                src="img/head.png"
+                alt="Голова"
+                style="left: 40px; top: 30px"
+                draggable="false"
+              />
+              <img
+                class="piece piece--body-front"
+                src="img/body_front.png"
+                alt="Начало туловища"
+                style="left: 400px; top: 60px"
+                draggable="false"
+              />
+              <img
+                class="piece piece--body-rear"
+                src="img/body_rear.png"
+                alt="Конец туловища"
+                style="left: 650px; top: 200px"
+                draggable="false"
+              />
+              <img
+                class="piece piece--ball"
+                src="img/ball.png"
+                alt="Мяч"
+                style="left: 120px; top: 300px"
+                draggable="false"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer__links">
+          <a href="../../index.html#hero">Главная</a>
+          <a href="../../index.html#experience">Опыт</a>
+          <a href="../../index.html#projects">Проекты</a>
+          <a href="../../index.html#education">Образование</a>
+          <a href="../../labs/lab2/lab2.html">Задание 2</a>
+          <a href="../../labs/lab3/lab3.html">Задание 3</a>
+          <a href="../../labs/lab4/lab4.html">Задание 4</a>
+          <a href="../../labs/lab5/lab5.html">Задание 5</a>
+          <a href="../../course.html">Курсовая</a>
+          <a href="../../index.html#contacts">Контакты</a>
+        </div>
+        <div class="footer__bottom">Данил Марков © 2026</div>
+      </div>
+    </footer>
+  </body>
+</html>
