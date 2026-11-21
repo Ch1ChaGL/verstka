@@ -38,6 +38,7 @@ main {
 .lab-page__body {
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 20px 0 40px;
 }
 
