@@ -1,113 +1,368 @@
-// Лабораторная 5: перетаскивание, выделение и поворот выбранной картинки на 90°
+// Лабораторная 5 на SVG: перетаскивание, выделение группы, поворот на 90° и линковка
+// Группы: после стыковки части двигаются и крутятся вместе.
 
-const field = document.getElementById('field');
+(function () {
+  'use strict';
 
-const ROTATE_STEP = 90; // на сколько градусов поворачивает одно нажатие
+  const NS = 'http://www.w3.org/2000/svg';
+  const VW = 960;
+  const VH = 560;
 
-let current = null; // какую картинку сейчас тащим
-let selected = null; // какая картинка выделена
-let startPointerX = 0; // где была мышь в момент нажатия
-let startPointerY = 0;
-let startLeft = 0; // где была картинка в момент нажатия
-let startTop = 0;
-let topZ = 1; // чтобы поднимать взятую картинку поверх остальных
+  const ROTATE_STEP = 90;
+  const SNAP = 25;
 
-// ---------- угол картинки ----------
+  const HOME = {
+    'piece--body-front': { x: 84, y: 86 },
+    'piece--body-rear': { x: 252, y: 29.5 },
+    'piece--head': { x: 2.5, y: -34 },
+    'piece--ball': { x: -35, y: 144 },
+  };
 
-// угол хранится в data-angle, а на экране задаётся через CSS transform
-function getAngle(piece) {
-  return Number(piece.dataset.angle) || 0;
-}
+  const svg = document.getElementById('field');
+  if (!svg) return;
 
-function setAngle(piece, angle) {
-  angle = ((angle % 360) + 360) % 360; // приводим к диапазону 0..359
-  piece.dataset.angle = angle;
-  piece.style.transform = 'rotate(' + angle + 'deg)';
-}
+  const items = [];
 
-// ---------- положение картинки ----------
+  // ----- превращаем <image> в объекты -----
+  svg.querySelectorAll('image').forEach(function (el) {
+    const p = {
+      el: el,
+      w: Number(el.getAttribute('width')),
+      h: Number(el.getAttribute('height')),
+      x: 0,
+      y: 0,
+      a: 0,
+      group: null,
+    };
+    for (const cls in HOME) {
+      if (el.classList.contains(cls)) {
+        p.home = HOME[cls];
+        p.cls = cls;
+      }
+    }
+    p.group = { members: [p] };
+    items.push(p);
+    el.addEventListener('pointerdown', function (e) {
+      onDown(e, p);
+    });
+  });
 
-// Поставить картинку в (x, y) и не дать ей выйти за поле.
-// Если картинка повёрнута на 90° или 270°, на экране её ширина и высота меняются местами.
-function moveTo(piece, x, y) {
-  const angle = getAngle(piece);
-  const turned = angle === 90 || angle === 270;
-  const visibleW = turned ? piece.offsetHeight : piece.offsetWidth; // ширина на экране
-  const visibleH = turned ? piece.offsetWidth : piece.offsetHeight; // высота на экране
-  const gapX = (piece.offsetWidth - visibleW) / 2; // на сколько left отличается от видимого края
-  const gapY = (piece.offsetHeight - visibleH) / 2;
+  let current = null;
+  let selected = null;
+  let drag = null;
+  let solved = false;
 
-  x = Math.max(-gapX, Math.min(x, field.clientWidth - visibleW - gapX));
-  y = Math.max(-gapY, Math.min(y, field.clientHeight - visibleH - gapY));
+  // ----- отрисовка -----
+  function render(p) {
+    const cx = p.w / 2;
+    const cy = p.h / 2;
+    p.el.setAttribute(
+      'transform',
+      'translate(' +
+        p.x +
+        ' ' +
+        p.y +
+        ') rotate(' +
+        p.a +
+        ' ' +
+        cx +
+        ' ' +
+        cy +
+        ')',
+    );
+  }
 
-  piece.style.left = x + 'px';
-  piece.style.top = y + 'px';
-}
+  function centerOf(p) {
+    return { x: p.x + p.w / 2, y: p.y + p.h / 2 };
+  }
 
-// ---------- выделение ----------
+  function rotateVec(x, y, deg) {
+    const k = (((deg % 360) + 360) % 360) / 90;
+    const cos = [1, 0, -1, 0][k];
+    const sin = [0, 1, 0, -1][k];
+    return { x: x * cos - y * sin, y: x * sin + y * cos };
+  }
 
-function select(piece) {
-  if (selected) selected.classList.remove('piece--selected');
-  selected = piece;
-  if (piece) piece.classList.add('piece--selected');
-}
+  function setAngle(p, a) {
+    p.a = ((a % 360) + 360) % 360;
+    render(p);
+  }
 
-// Нажали вне картинки и вне кнопок поворота — снимаем выделение
-document.addEventListener('pointerdown', function (e) {
-  if (e.target.closest('.piece')) return; // нажали на картинку
-  if (e.target.closest('#rotateLeft, #rotateRight')) return; // нажали на кнопку поворота
-  select(null);
-});
+  // ----- координаты мыши в системе viewBox -----
+  function toSvg(e) {
+    const pt = svg.createSVGPoint();
+    pt.x = e.clientX;
+    pt.y = e.clientY;
+    return pt.matrixTransform(svg.getScreenCTM().inverse());
+  }
 
-// ---------- поворот кнопками ----------
+  // ----- границы поля для одной картинки -----
+  function limits(p) {
+    const turned = p.a === 90 || p.a === 270;
+    const vw = turned ? p.h : p.w;
+    const vh = turned ? p.w : p.h;
+    const gx = (p.w - vw) / 2;
+    const gy = (p.h - vh) / 2;
+    return {
+      minX: -gx,
+      maxX: VW - vw - gx,
+      minY: -gy,
+      maxY: VH - vh - gy,
+    };
+  }
 
-function rotateSelected(delta) {
-  if (!selected) return; // ничего не выбрано
-  setAngle(selected, getAngle(selected) + delta);
-  moveTo(selected, selected.offsetLeft, selected.offsetTop); // после поворота не выпускаем за поле
-}
+  // ----- сдвиг группы с учётом границ -----
+  function moveGroup(snap, dx, dy) {
+    let minDx = -Infinity,
+      maxDx = Infinity,
+      minDy = -Infinity,
+      maxDy = Infinity;
+    snap.forEach(function (it) {
+      const l = limits(it.p);
+      minDx = Math.max(minDx, l.minX - it.x);
+      maxDx = Math.min(maxDx, l.maxX - it.x);
+      minDy = Math.max(minDy, l.minY - it.y);
+      maxDy = Math.min(maxDy, l.maxY - it.y);
+    });
+    dx = Math.max(minDx, Math.min(dx, maxDx));
+    dy = Math.max(minDy, Math.min(dy, maxDy));
+    snap.forEach(function (it) {
+      it.p.x = it.x + dx;
+      it.p.y = it.y + dy;
+      render(it.p);
+    });
+    refreshSelection();
+  }
 
-document.getElementById('rotateLeft').addEventListener('click', function () {
-  rotateSelected(-ROTATE_STEP);
-});
-document.getElementById('rotateRight').addEventListener('click', function () {
-  rotateSelected(ROTATE_STEP);
-});
+  // ----- снимок позиций группы -----
+  function snapshot(members) {
+    return members.map(function (m) {
+      return { p: m, x: m.x, y: m.y };
+    });
+  }
 
-// ---------- перетаскивание ----------
+  // ----- выделение (общая рамка вокруг группы) -----
+  let outlineEl = null;
 
-// 1) Нажали на картинку
-field.addEventListener('pointerdown', function (e) {
-  if (!e.target.classList.contains('piece')) return; // нажали не на картинку
+  function refreshSelection() {
+    if (outlineEl) {
+      outlineEl.remove();
+      outlineEl = null;
+    }
+    if (!selected) return;
 
-  current = e.target;
-  select(current);
+    const members = selected.group.members;
+    let minX = Infinity,
+      minY = Infinity,
+      maxX = -Infinity,
+      maxY = -Infinity;
+    members.forEach(function (m) {
+      const turned = m.a === 90 || m.a === 270;
+      const vw = turned ? m.h : m.w;
+      const vh = turned ? m.w : m.h;
+      const gx = (m.w - vw) / 2;
+      const gy = (m.h - vh) / 2;
+      const l = m.x + gx;
+      const t = m.y + gy;
+      minX = Math.min(minX, l);
+      minY = Math.min(minY, t);
+      maxX = Math.max(maxX, l + vw);
+      maxY = Math.max(maxY, t + vh);
+    });
 
-  // Запоминаем, где были мышь и картинка.
-  // getBoundingClientRect() здесь нельзя: у повёрнутой картинки он даёт рамку вокруг повёрнутой фигуры,
-  // и картинка при перетаскивании «прыгала» бы.
-  startPointerX = e.clientX;
-  startPointerY = e.clientY;
-  startLeft = current.offsetLeft;
-  startTop = current.offsetTop;
+    outlineEl = document.createElementNS(NS, 'rect');
+    outlineEl.setAttribute('class', 'group-outline');
+    outlineEl.setAttribute('x', minX - 4);
+    outlineEl.setAttribute('y', minY - 4);
+    outlineEl.setAttribute('width', maxX - minX + 8);
+    outlineEl.setAttribute('height', maxY - minY + 8);
+    outlineEl.setAttribute('rx', 6);
+    outlineEl.setAttribute('ry', 6);
+    svg.appendChild(outlineEl);
+  }
 
-  current.style.zIndex = ++topZ; // поверх остальных
-});
+  function select(p) {
+    selected = p;
+    refreshSelection();
+  }
 
-// 2) Двигаем мышь: новая позиция = старая позиция + на сколько сдвинулась мышь
-document.addEventListener('pointermove', function (e) {
-  if (!current) return;
-  moveTo(
-    current,
-    startLeft + (e.clientX - startPointerX),
-    startTop + (e.clientY - startPointerY),
-  );
-});
+  document.addEventListener('pointerdown', function (e) {
+    if (e.target.closest && e.target.closest('.piece')) return;
+    if (e.target.closest && e.target.closest('button')) return;
+    select(null);
+  });
 
-// 3) Отпустили кнопку — перестаём тащить
-document.addEventListener('pointerup', function () {
-  current = null;
-});
-document.addEventListener('pointercancel', function () {
-  current = null;
-});
+  // ----- анимация победы -----
+  function wiggle(group) {
+    group.members.forEach(function (m) {
+      m.el.classList.remove('piece--wiggle');
+      void m.el.getBoundingClientRect();
+      m.el.classList.add('piece--wiggle');
+    });
+  }
+
+  items.forEach(function (p) {
+    p.el.addEventListener('animationend', function () {
+      p.el.classList.remove('piece--wiggle');
+    });
+  });
+
+  // ----- линковка -----
+  function tryLink(group) {
+    let linked = false;
+    let found = true;
+
+    while (found) {
+      found = false;
+      for (const a of group.members) {
+        for (const b of items) {
+          if (b.group === group) continue;
+
+          const isBall = a.cls === 'piece--ball' || b.cls === 'piece--ball';
+          if (!isBall && a.a !== b.a) continue;
+
+          const need = rotateVec(
+            a.home.x - b.home.x,
+            a.home.y - b.home.y,
+            isBall ? 0 : a.a,
+          );
+          const ca = centerOf(a);
+          const cb = centerOf(b);
+          const dx = cb.x + need.x - ca.x;
+          const dy = cb.y + need.y - ca.y;
+          if (Math.hypot(dx, dy) > SNAP) continue;
+
+          group.members.forEach(function (m) {
+            m.x += dx;
+            m.y += dy;
+            render(m);
+          });
+
+          const other = b.group;
+          group.members.forEach(function (m) {
+            other.members.push(m);
+            m.group = other;
+          });
+          group = other;
+          linked = true;
+          found = true;
+          break;
+        }
+        if (found) break;
+      }
+    }
+
+    if (linked) {
+      moveGroup(snapshot(group.members), 0, 0);
+      refreshSelection();
+      if (group.members.length === items.length) {
+        solved = true;
+        wiggle(group);
+        const s = document.getElementById('status');
+        if (s) s.textContent = '🎉 Собака с мячом собрана!';
+      }
+    }
+  }
+
+  // ----- поворот группы вокруг выбранной картинки -----
+  function rotateSelected(delta) {
+    if (!selected || solved) return;
+    const members = selected.group.members;
+    const pivot = centerOf(selected);
+
+    members.forEach(function (m) {
+      const c = centerOf(m);
+      const v = rotateVec(c.x - pivot.x, c.y - pivot.y, delta);
+      m.x = pivot.x + v.x - m.w / 2;
+      m.y = pivot.y + v.y - m.h / 2;
+      setAngle(m, m.a + delta);
+    });
+
+    moveGroup(snapshot(members), 0, 0);
+    tryLink(selected.group);
+  }
+
+  document.getElementById('rotateLeft').addEventListener('click', function () {
+    rotateSelected(-ROTATE_STEP);
+  });
+  document.getElementById('rotateRight').addEventListener('click', function () {
+    rotateSelected(ROTATE_STEP);
+  });
+
+  // ----- перетаскивание (всей группы) -----
+  function onDown(e, p) {
+    if (solved) return;
+    e.preventDefault();
+    e.stopPropagation();
+    current = p;
+    select(p);
+
+    // Поднять ВСЮ группу наверх (в SVG порядок = z-index)
+    p.group.members.forEach(function (m) {
+      svg.appendChild(m.el);
+    });
+
+    const pt = toSvg(e);
+    drag = {
+      p: p,
+      sx: pt.x,
+      sy: pt.y,
+      group: snapshot(p.group.members), // ← снимок ВСЕЙ группы
+    };
+    svg.setPointerCapture(e.pointerId);
+  }
+
+  svg.addEventListener('pointermove', function (e) {
+    if (!drag) return;
+    const pt = toSvg(e);
+    moveGroup(drag.group, pt.x - drag.sx, pt.y - drag.sy); // ← двигаем всю группу
+  });
+
+  svg.addEventListener('pointerup', function () {
+    if (!drag) return;
+    const p = drag.p;
+    drag = null;
+    tryLink(p.group);
+  });
+
+  svg.addEventListener('pointercancel', function () {
+    drag = null;
+  });
+
+  // ----- перемешать -----
+  function shuffle() {
+    solved = false;
+    const s = document.getElementById('status');
+    if (s) s.textContent = '';
+
+    items.forEach(function (p) {
+      p.group = { members: [p] };
+      p.el.classList.remove('piece--wiggle');
+    });
+
+    const spots = [
+      { x: 40, y: 30 },
+      { x: 400, y: 60 },
+      { x: 650, y: 200 },
+      { x: 120, y: 300 },
+    ];
+    const angles = [90, 180, 270];
+
+    items.forEach(function (p, i) {
+      p.x = spots[i].x;
+      p.y = spots[i].y;
+      p.a =
+        p.cls === 'piece--ball'
+          ? 0
+          : angles[Math.floor(Math.random() * angles.length)];
+      render(p);
+    });
+
+    select(null);
+  }
+
+  document.getElementById('shuffle').addEventListener('click', shuffle);
+
+  // старт
+  shuffle();
+})();
