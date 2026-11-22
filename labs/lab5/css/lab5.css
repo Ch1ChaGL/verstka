@@ -15,41 +15,77 @@
   opacity: 0.75;
 }
 
-/* SVG-поле: адаптивное, сохраняет пропорции 960:560 */
-.field {
+/* Образец */
+.reference {
   display: block;
-  width: 100%;
+  margin-bottom: 12px;
+  padding: 8px 10px 10px;
+  border: 2px dashed #8a97a6;
+  border-radius: 8px;
+  background: #fff;
+}
+.reference__title {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.reference__img {
+  display: block;
+  width: 200px;
   height: auto;
-  aspect-ratio: 960 / 560;
+}
+
+/* Поле: картинки внутри позиционируются от него */
+.field {
+  position: relative;
+  width: 100%;
+  height: 520px;
   border: 3px solid #0f172a;
   border-radius: 8px;
   background: #fff;
+  overflow: hidden;
   user-select: none;
-  touch-action: none;
+}
+.field--done {
+  border-color: #2f9468;
 }
 
+/* Картинки. Размеры должны быть пропорциональны друг другу (сейчас всё уменьшено примерно до 70%).
+   Если меняете ширину — меняйте у всех четырёх в одно и то же число раз. */
 .piece {
+  position: absolute;
   cursor: grab;
+  touch-action: none; /* на телефоне палец двигает картинку, а не страницу */
 }
 .piece:active {
   cursor: grabbing;
 }
+.piece--head {
+  width: 165px;
+}
+.piece--body-front {
+  width: 118px;
+}
+.piece--body-rear {
+  width: 118px;
+}
+.piece--ball {
+  width: 91px;
+}
 
+/* выбранная картинка */
 .piece--selected {
   filter: drop-shadow(0 0 6px #1b7de0);
 }
 
-/* Рамка вокруг группы — тоже SVG-элемент, стилизуем через stroke */
-.group-outline {
-  fill: none;
-  stroke: #1b7de0;
-  stroke-width: 2;
-  stroke-dasharray: 6 4;
-  pointer-events: none;
-}
-
+/* подёргивание вверх-вниз.
+   Используем translate (а не transform), чтобы не сбить поворот картинки */
 .piece--wiggle {
   animation: piece-wiggle 0.6s ease-in-out;
+}
+.field--done .piece--wiggle {
+  animation-iteration-count: 3; /* когда всё собрано — дёргается дольше */
 }
 
 @keyframes piece-wiggle {
@@ -69,26 +105,6 @@
   80% {
     translate: 0 3px;
   }
-}
-
-.reference {
-  display: block;
-  margin-bottom: 12px;
-  padding: 8px 10px 10px;
-  border: 2px dashed #8a97a6;
-  border-radius: 8px;
-  background: #fff;
-}
-.reference__title {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 14px;
-  font-weight: 700;
-}
-.reference__img {
-  display: block;
-  width: 200px;
-  height: auto;
 }
 
 .status {

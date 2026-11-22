@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Лабораторная 2 — Данил Марков</title>
+    <title>Лабораторная 5 — Данил Марков</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -95,39 +95,40 @@
               >
             </div>
 
-            <svg
-              class="field"
-              id="field"
-              viewBox="0 0 960 560"
-              preserveAspectRatio="xMidYMid meet"
-              role="img"
-              aria-label="Игровое поле"
-            >
-              <image
+            <div class="field" id="field">
+              <img
                 class="piece piece--head"
-                href="img/head.png"
-                width="235"
-                height="166"
+                data-part="head"
+                src="img/head.png"
+                alt="Голова"
+                style="left: 40px; top: 30px"
+                draggable="false"
               />
-              <image
+              <img
                 class="piece piece--body-front"
-                href="img/body_front.png"
-                width="168"
-                height="172"
+                data-part="front"
+                src="img/body_front.png"
+                alt="Начало туловища"
+                style="left: 400px; top: 60px"
+                draggable="false"
               />
-              <image
+              <img
                 class="piece piece--body-rear"
-                href="img/body_rear.png"
-                width="168"
-                height="273"
+                data-part="rear"
+                src="img/body_rear.png"
+                alt="Конец туловища"
+                style="left: 650px; top: 200px"
+                draggable="false"
               />
-              <image
+              <img
                 class="piece piece--ball"
-                href="img/ball.png"
-                width="130"
-                height="130"
+                data-part="ball"
+                src="img/ball.png"
+                alt="Мяч"
+                style="left: 120px; top: 300px"
+                draggable="false"
               />
-            </svg>
+            </div>
 
             <p class="status" id="status"></p>
           </div>

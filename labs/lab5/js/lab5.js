@@ -1,368 +1,299 @@
-// Лабораторная 5 на SVG: перетаскивание, выделение группы, поворот на 90° и линковка
-// Группы: после стыковки части двигаются и крутятся вместе.
+const field = document.getElementById('field');
+const statusEl = document.getElementById('status');
+const pieces = Array.from(document.querySelectorAll('.piece')); // все 4 картинки
+const base = document.querySelector('[data-part="front"]'); // туловище — основа, к ней клеим остальное
 
-(function () {
-  'use strict';
+const ROTATE_STEP = 90; // на сколько градусов поворачивает одно нажатие
+const SNAP = 25; // с какого расстояния (px) часть «прилипает» к своему месту
 
-  const NS = 'http://www.w3.org/2000/svg';
-  const VW = 960;
-  const VH = 560;
+// Смещения ниже записаны для туловища шириной 168px.
+// Если туловище на странице меньше или больше, всё пересчитывается в tryAttach.
+const DESIGN_WIDTH = 168;
 
-  const ROTATE_STEP = 90;
-  const SNAP = 25;
+// Где должен быть центр каждой части относительно центра туловища в собранной собаке
+const OFFSETS = {
+  rear: { x: 168, y: -56 }, // конец туловища
+  head: { x: -82, y: -120 }, // голова
+  ball: { x: -119, y: 58, snap: 50 }, // мяч (круглый, поэтому допуск по расстоянию побольше)
+};
 
-  const HOME = {
-    'piece--body-front': { x: 84, y: 86 },
-    'piece--body-rear': { x: 252, y: 29.5 },
-    'piece--head': { x: 2.5, y: -34 },
-    'piece--ball': { x: -35, y: 144 },
+let current = null; // какую картинку сейчас тащим
+let selected = null; // какая картинка выбрана
+let startPointerX = 0; // где была мышь в момент нажатия
+let startPointerY = 0;
+let dragItems = []; // что тащим: картинки и их стартовые позиции
+let topZ = 1; // чтобы поднимать взятую картинку поверх остальных
+
+// ---------- вспомогательные функции ----------
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function getLeft(piece) {
+  return parseFloat(piece.style.left) || 0;
+}
+function getTop(piece) {
+  return parseFloat(piece.style.top) || 0;
+}
+
+function centerOf(piece) {
+  return {
+    x: getLeft(piece) + piece.offsetWidth / 2,
+    y: getTop(piece) + piece.offsetHeight / 2,
   };
+}
 
-  const svg = document.getElementById('field');
-  if (!svg) return;
-
-  const items = [];
-
-  // ----- превращаем <image> в объекты -----
-  svg.querySelectorAll('image').forEach(function (el) {
-    const p = {
-      el: el,
-      w: Number(el.getAttribute('width')),
-      h: Number(el.getAttribute('height')),
-      x: 0,
-      y: 0,
-      a: 0,
-      group: null,
-    };
-    for (const cls in HOME) {
-      if (el.classList.contains(cls)) {
-        p.home = HOME[cls];
-        p.cls = cls;
-      }
-    }
-    p.group = { members: [p] };
-    items.push(p);
-    el.addEventListener('pointerdown', function (e) {
-      onDown(e, p);
+// Группа: если картинка приклеена к туловищу (или это само туловище) —
+// двигается всё собранное вместе. Иначе картинка двигается одна.
+function groupOf(piece) {
+  if (piece === base || piece.classList.contains('piece--linked')) {
+    return pieces.filter(function (p) {
+      return p === base || p.classList.contains('piece--linked');
     });
+  }
+  return [piece];
+}
+
+// угол хранится в data-angle, а на экране задаётся через CSS transform
+function getAngle(piece) {
+  return Number(piece.dataset.angle) || 0;
+}
+
+function setAngle(piece, angle) {
+  angle = ((angle % 360) + 360) % 360; // приводим к диапазону 0..359
+  piece.dataset.angle = angle;
+  piece.style.transform = 'rotate(' + angle + 'deg)';
+}
+
+// В каких пределах может быть left/top картинки, чтобы она не вышла за поле.
+// Если картинка повёрнута на 90° или 270°, на экране её ширина и высота меняются местами.
+function limits(piece) {
+  const angle = getAngle(piece);
+  const turned = angle === 90 || angle === 270;
+  const visibleW = turned ? piece.offsetHeight : piece.offsetWidth;
+  const visibleH = turned ? piece.offsetWidth : piece.offsetHeight;
+  const gapX = (piece.offsetWidth - visibleW) / 2;
+  const gapY = (piece.offsetHeight - visibleH) / 2;
+  return {
+    minX: -gapX,
+    maxX: field.clientWidth - visibleW - gapX,
+    minY: -gapY,
+    maxY: field.clientHeight - visibleH - gapY,
+  };
+}
+
+// Запомнить позиции картинок
+function snapshot(list) {
+  return list.map(function (p) {
+    return { piece: p, left: getLeft(p), top: getTop(p) };
   });
+}
 
-  let current = null;
-  let selected = null;
-  let drag = null;
-  let solved = false;
-
-  // ----- отрисовка -----
-  function render(p) {
-    const cx = p.w / 2;
-    const cy = p.h / 2;
-    p.el.setAttribute(
-      'transform',
-      'translate(' +
-        p.x +
-        ' ' +
-        p.y +
-        ') rotate(' +
-        p.a +
-        ' ' +
-        cx +
-        ' ' +
-        cy +
-        ')',
-    );
-  }
-
-  function centerOf(p) {
-    return { x: p.x + p.w / 2, y: p.y + p.h / 2 };
-  }
-
-  function rotateVec(x, y, deg) {
-    const k = (((deg % 360) + 360) % 360) / 90;
-    const cos = [1, 0, -1, 0][k];
-    const sin = [0, 1, 0, -1][k];
-    return { x: x * cos - y * sin, y: x * sin + y * cos };
-  }
-
-  function setAngle(p, a) {
-    p.a = ((a % 360) + 360) % 360;
-    render(p);
-  }
-
-  // ----- координаты мыши в системе viewBox -----
-  function toSvg(e) {
-    const pt = svg.createSVGPoint();
-    pt.x = e.clientX;
-    pt.y = e.clientY;
-    return pt.matrixTransform(svg.getScreenCTM().inverse());
-  }
-
-  // ----- границы поля для одной картинки -----
-  function limits(p) {
-    const turned = p.a === 90 || p.a === 270;
-    const vw = turned ? p.h : p.w;
-    const vh = turned ? p.w : p.h;
-    const gx = (p.w - vw) / 2;
-    const gy = (p.h - vh) / 2;
-    return {
-      minX: -gx,
-      maxX: VW - vw - gx,
-      minY: -gy,
-      maxY: VH - vh - gy,
-    };
-  }
-
-  // ----- сдвиг группы с учётом границ -----
-  function moveGroup(snap, dx, dy) {
-    let minDx = -Infinity,
-      maxDx = Infinity,
-      minDy = -Infinity,
-      maxDy = Infinity;
-    snap.forEach(function (it) {
-      const l = limits(it.p);
-      minDx = Math.max(minDx, l.minX - it.x);
-      maxDx = Math.min(maxDx, l.maxX - it.x);
-      minDy = Math.max(minDy, l.minY - it.y);
-      maxDy = Math.min(maxDy, l.maxY - it.y);
-    });
-    dx = Math.max(minDx, Math.min(dx, maxDx));
-    dy = Math.max(minDy, Math.min(dy, maxDy));
-    snap.forEach(function (it) {
-      it.p.x = it.x + dx;
-      it.p.y = it.y + dy;
-      render(it.p);
-    });
-    refreshSelection();
-  }
-
-  // ----- снимок позиций группы -----
-  function snapshot(members) {
-    return members.map(function (m) {
-      return { p: m, x: m.x, y: m.y };
-    });
-  }
-
-  // ----- выделение (общая рамка вокруг группы) -----
-  let outlineEl = null;
-
-  function refreshSelection() {
-    if (outlineEl) {
-      outlineEl.remove();
-      outlineEl = null;
-    }
-    if (!selected) return;
-
-    const members = selected.group.members;
-    let minX = Infinity,
-      minY = Infinity,
-      maxX = -Infinity,
-      maxY = -Infinity;
-    members.forEach(function (m) {
-      const turned = m.a === 90 || m.a === 270;
-      const vw = turned ? m.h : m.w;
-      const vh = turned ? m.w : m.h;
-      const gx = (m.w - vw) / 2;
-      const gy = (m.h - vh) / 2;
-      const l = m.x + gx;
-      const t = m.y + gy;
-      minX = Math.min(minX, l);
-      minY = Math.min(minY, t);
-      maxX = Math.max(maxX, l + vw);
-      maxY = Math.max(maxY, t + vh);
-    });
-
-    outlineEl = document.createElementNS(NS, 'rect');
-    outlineEl.setAttribute('class', 'group-outline');
-    outlineEl.setAttribute('x', minX - 4);
-    outlineEl.setAttribute('y', minY - 4);
-    outlineEl.setAttribute('width', maxX - minX + 8);
-    outlineEl.setAttribute('height', maxY - minY + 8);
-    outlineEl.setAttribute('rx', 6);
-    outlineEl.setAttribute('ry', 6);
-    svg.appendChild(outlineEl);
-  }
-
-  function select(p) {
-    selected = p;
-    refreshSelection();
-  }
-
-  document.addEventListener('pointerdown', function (e) {
-    if (e.target.closest && e.target.closest('.piece')) return;
-    if (e.target.closest && e.target.closest('button')) return;
-    select(null);
+// Сдвинуть картинки на (dx, dy) от запомненных позиций так, чтобы ни одна не вышла за поле.
+// Картинки сдвигаются на одно и то же расстояние, поэтому группа не разъезжается.
+function moveGroup(items, dx, dy) {
+  let minDx = -Infinity;
+  let maxDx = Infinity;
+  let minDy = -Infinity;
+  let maxDy = Infinity;
+  items.forEach(function (it) {
+    const l = limits(it.piece);
+    minDx = Math.max(minDx, l.minX - it.left);
+    maxDx = Math.min(maxDx, l.maxX - it.left);
+    minDy = Math.max(minDy, l.minY - it.top);
+    maxDy = Math.min(maxDy, l.maxY - it.top);
   });
+  dx = Math.max(minDx, Math.min(dx, maxDx));
+  dy = Math.max(minDy, Math.min(dy, maxDy));
 
-  // ----- анимация победы -----
-  function wiggle(group) {
-    group.members.forEach(function (m) {
-      m.el.classList.remove('piece--wiggle');
-      void m.el.getBoundingClientRect();
-      m.el.classList.add('piece--wiggle');
+  items.forEach(function (it) {
+    it.piece.style.left = it.left + dx + 'px';
+    it.piece.style.top = it.top + dy + 'px';
+  });
+}
+
+// Поставить одну картинку в (x, y) и не дать ей выйти за поле
+function moveTo(piece, x, y) {
+  moveGroup(snapshot([piece]), x - getLeft(piece), y - getTop(piece));
+}
+
+// ---------- выделение ----------
+
+// выделяется вся группа, в которой находится выбранная картинка
+function refreshSelection() {
+  pieces.forEach(function (p) {
+    p.classList.remove('piece--selected');
+  });
+  if (selected) {
+    groupOf(selected).forEach(function (p) {
+      p.classList.add('piece--selected');
     });
   }
+}
 
-  items.forEach(function (p) {
-    p.el.addEventListener('animationend', function () {
-      p.el.classList.remove('piece--wiggle');
-    });
-  });
+function select(piece) {
+  selected = piece;
+  refreshSelection();
+}
 
-  // ----- линковка -----
-  function tryLink(group) {
-    let linked = false;
-    let found = true;
+// Нажали вне картинки и вне кнопок поворота — снимаем выделение
+document.addEventListener('pointerdown', function (e) {
+  if (e.target.closest('.piece')) return;
+  if (e.target.closest('#rotateLeft, #rotateRight')) return;
+  select(null);
+});
 
-    while (found) {
-      found = false;
-      for (const a of group.members) {
-        for (const b of items) {
-          if (b.group === group) continue;
+// ---------- поворот кнопками ----------
 
-          const isBall = a.cls === 'piece--ball' || b.cls === 'piece--ball';
-          if (!isBall && a.a !== b.a) continue;
-
-          const need = rotateVec(
-            a.home.x - b.home.x,
-            a.home.y - b.home.y,
-            isBall ? 0 : a.a,
-          );
-          const ca = centerOf(a);
-          const cb = centerOf(b);
-          const dx = cb.x + need.x - ca.x;
-          const dy = cb.y + need.y - ca.y;
-          if (Math.hypot(dx, dy) > SNAP) continue;
-
-          group.members.forEach(function (m) {
-            m.x += dx;
-            m.y += dy;
-            render(m);
-          });
-
-          const other = b.group;
-          group.members.forEach(function (m) {
-            other.members.push(m);
-            m.group = other;
-          });
-          group = other;
-          linked = true;
-          found = true;
-          break;
-        }
-        if (found) break;
-      }
-    }
-
-    if (linked) {
-      moveGroup(snapshot(group.members), 0, 0);
-      refreshSelection();
-      if (group.members.length === items.length) {
-        solved = true;
-        wiggle(group);
-        const s = document.getElementById('status');
-        if (s) s.textContent = '🎉 Собака с мячом собрана!';
-      }
-    }
+function rotateSelected(delta) {
+  if (!selected) return; // ничего не выбрано
+  if (groupOf(selected).length > 1) {
+    statusEl.textContent =
+      'Собранные части поворачивать нельзя — они уже стоят прямо.';
+    return;
   }
+  setAngle(selected, getAngle(selected) + delta);
+  moveTo(selected, getLeft(selected), getTop(selected)); // после поворота не выпускаем за поле
+  checkAssembly();
+}
 
-  // ----- поворот группы вокруг выбранной картинки -----
-  function rotateSelected(delta) {
-    if (!selected || solved) return;
-    const members = selected.group.members;
-    const pivot = centerOf(selected);
+document.getElementById('rotateLeft').addEventListener('click', function () {
+  rotateSelected(-ROTATE_STEP);
+});
+document.getElementById('rotateRight').addEventListener('click', function () {
+  rotateSelected(ROTATE_STEP);
+});
 
-    members.forEach(function (m) {
-      const c = centerOf(m);
-      const v = rotateVec(c.x - pivot.x, c.y - pivot.y, delta);
-      m.x = pivot.x + v.x - m.w / 2;
-      m.y = pivot.y + v.y - m.h / 2;
-      setAngle(m, m.a + delta);
-    });
+// ---------- защёлкивание частей на туловище ----------
 
-    moveGroup(snapshot(members), 0, 0);
-    tryLink(selected.group);
+// Подёргать картинки вверх-вниз (все вместе)
+function wiggle(list) {
+  list.forEach(function (piece) {
+    piece.classList.remove('piece--wiggle');
+    void piece.offsetWidth; // чтобы анимация запустилась заново
+    piece.classList.add('piece--wiggle');
+  });
+}
+pieces.forEach(function (piece) {
+  piece.addEventListener('animationend', function () {
+    piece.classList.remove('piece--wiggle');
+  });
+});
+
+// Если часть стоит прямо рядом со своим местом на туловище — приклеиваем её
+function tryAttach(piece) {
+  if (piece === base || piece.classList.contains('piece--linked')) return false;
+  if (getAngle(base) !== 0) return false; // туловище должно стоять прямо
+  const isBall = piece.dataset.part === 'ball';
+  if (!isBall && getAngle(piece) !== 0) return false; // части должны стоять прямо (мячу угол не важен — он круглый)
+
+  const scale = base.offsetWidth / DESIGN_WIDTH; // во сколько раз картинки уменьшены на странице
+  const offset = OFFSETS[piece.dataset.part];
+  const b = centerOf(base);
+  const targetX = b.x + offset.x * scale; // где должен быть центр части
+  const targetY = b.y + offset.y * scale;
+
+  const c = centerOf(piece);
+  const snap = (offset.snap || SNAP) * scale; // допуск: у мяча свой, у остальных общий
+  if (Math.hypot(targetX - c.x, targetY - c.y) > snap) return false; // ещё далеко
+
+  piece.style.left = targetX - piece.offsetWidth / 2 + 'px'; // ставим точно на место
+  piece.style.top = targetY - piece.offsetHeight / 2 + 'px';
+  setAngle(piece, 0); // мяч после приклеивания тоже выравниваем
+  piece.classList.add('piece--linked');
+  return true;
+}
+
+// Проверяем все части; если что-то приклеилось — подёргиваем собранное
+function checkAssembly() {
+  let attached = false;
+  pieces.forEach(function (piece) {
+    if (tryAttach(piece)) attached = true;
+  });
+  if (!attached) return;
+
+  const group = groupOf(base);
+  moveGroup(snapshot(group), 0, 0); // если группа вылезла за край поля — сдвигаем её внутрь целиком
+  refreshSelection();
+
+  if (group.length === pieces.length) {
+    field.classList.add('field--done'); // всё собрано: подёргивание дольше
+    statusEl.textContent = '🎉 Собака с мячом собрана!';
+  } else {
+    statusEl.textContent =
+      'Собрано частей: ' + group.length + ' из ' + pieces.length + '.';
   }
+  wiggle(group);
+}
 
-  document.getElementById('rotateLeft').addEventListener('click', function () {
-    rotateSelected(-ROTATE_STEP);
+// ---------- перемешать ----------
+
+// Поле делится на 4 клетки, в каждую кладём одну картинку со случайным углом 90/180/270
+function shuffle() {
+  select(null);
+  field.classList.remove('field--done');
+  statusEl.textContent = '';
+
+  const cells = [
+    [0, 0],
+    [1, 0],
+    [0, 1],
+    [1, 1],
+  ].sort(function () {
+    return Math.random() - 0.5;
   });
-  document.getElementById('rotateRight').addEventListener('click', function () {
-    rotateSelected(ROTATE_STEP);
+  const cellW = field.clientWidth / 2;
+  const cellH = field.clientHeight / 2;
+
+  pieces.forEach(function (piece, i) {
+    piece.classList.remove('piece--linked', 'piece--wiggle');
+    setAngle(piece, randomInt(1, 3) * 90); // 90°, 180° или 270° — картинка всегда повёрнута
+    const x =
+      cells[i][0] * cellW +
+      randomInt(0, Math.max(0, cellW - piece.offsetWidth));
+    const y =
+      cells[i][1] * cellH +
+      randomInt(0, Math.max(0, cellH - piece.offsetHeight));
+    moveTo(piece, x, y);
   });
+}
 
-  // ----- перетаскивание (всей группы) -----
-  function onDown(e, p) {
-    if (solved) return;
-    e.preventDefault();
-    e.stopPropagation();
-    current = p;
-    select(p);
+document.getElementById('shuffle').addEventListener('click', shuffle);
+window.addEventListener('load', shuffle); // размеры картинок известны только после загрузки
 
-    // Поднять ВСЮ группу наверх (в SVG порядок = z-index)
-    p.group.members.forEach(function (m) {
-      svg.appendChild(m.el);
-    });
+// ---------- перетаскивание ----------
 
-    const pt = toSvg(e);
-    drag = {
-      p: p,
-      sx: pt.x,
-      sy: pt.y,
-      group: snapshot(p.group.members), // ← снимок ВСЕЙ группы
-    };
-    svg.setPointerCapture(e.pointerId);
-  }
+// 1) Нажали на картинку
+field.addEventListener('pointerdown', function (e) {
+  if (!e.target.classList.contains('piece')) return; // нажали не на картинку
 
-  svg.addEventListener('pointermove', function (e) {
-    if (!drag) return;
-    const pt = toSvg(e);
-    moveGroup(drag.group, pt.x - drag.sx, pt.y - drag.sy); // ← двигаем всю группу
+  current = e.target;
+  select(current);
+
+  // Что тащим: одну картинку или всю собранную группу
+  const group = groupOf(current);
+  dragItems = snapshot(group);
+  startPointerX = e.clientX;
+  startPointerY = e.clientY;
+
+  group.forEach(function (p) {
+    p.style.zIndex = ++topZ; // поверх остальных
   });
+});
 
-  svg.addEventListener('pointerup', function () {
-    if (!drag) return;
-    const p = drag.p;
-    drag = null;
-    tryLink(p.group);
-  });
+// 2) Двигаем мышь: всё, что тащим, сдвигается на столько же, на сколько сдвинулась мышь
+document.addEventListener('pointermove', function (e) {
+  if (!current) return;
+  moveGroup(dragItems, e.clientX - startPointerX, e.clientY - startPointerY);
+});
 
-  svg.addEventListener('pointercancel', function () {
-    drag = null;
-  });
-
-  // ----- перемешать -----
-  function shuffle() {
-    solved = false;
-    const s = document.getElementById('status');
-    if (s) s.textContent = '';
-
-    items.forEach(function (p) {
-      p.group = { members: [p] };
-      p.el.classList.remove('piece--wiggle');
-    });
-
-    const spots = [
-      { x: 40, y: 30 },
-      { x: 400, y: 60 },
-      { x: 650, y: 200 },
-      { x: 120, y: 300 },
-    ];
-    const angles = [90, 180, 270];
-
-    items.forEach(function (p, i) {
-      p.x = spots[i].x;
-      p.y = spots[i].y;
-      p.a =
-        p.cls === 'piece--ball'
-          ? 0
-          : angles[Math.floor(Math.random() * angles.length)];
-      render(p);
-    });
-
-    select(null);
-  }
-
-  document.getElementById('shuffle').addEventListener('click', shuffle);
-
-  // старт
-  shuffle();
-})();
+// 3) Отпустили кнопку — перестаём тащить и проверяем, не приклеилось ли что-то
+document.addEventListener('pointerup', function () {
+  if (!current) return;
+  current = null;
+  checkAssembly();
+});
+document.addEventListener('pointercancel', function () {
+  current = null;
+});
